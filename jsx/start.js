@@ -1,8 +1,8 @@
 define(['CommentBox', 'React'], function(CommentBox, React) {
-    return function( ) {
+    return function(id) {
         React.render(
-            <CommentBox />,
-            document.getElementById('content')
+            <V />,
+            document.getElementById(id)
         );
     }
 });
