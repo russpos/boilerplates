@@ -1,7 +1,7 @@
-define(['CommentBox', 'React'], function(CommentBox, React) {
+define(['Variations', 'React'], function(Variations, React) {
     return function(id) {
         React.render(
-            <V />,
+            <Variations />,
             document.getElementById(id)
         );
     }
