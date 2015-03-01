@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>React Demo</title>
+    </head>
+    <body>
+        <section id="content"></section>
+    </body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        requirejs.config({
+            paths: {
+                '_' : '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min',
+                'jQuery' : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min',
+                'React' : '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min'
+            },
+            baseUrl: '/js',
+            shim: {
+                'underscore' : { exports: '_'},
+                'jQuery' : { exports: '$' },
+                'React' : { exports: 'React' }
+            }
+            });
+        require(['start'], function(start) { start(); });
+    </script>
+
+</html>
