@@ -1,5 +1,5 @@
 define([
-    '_',
+    'underscore',
     'PropertyMap',
     'React'
 ], function(
@@ -9,8 +9,9 @@ define([
 ) {
     return React.createClass({
 
-        onChange: function() {
-            debugger;
+        onChange: function(event) {
+            console.log('> Changd');
+            this.props.variation.setProperty(event.target.value);
         },
 
         render: function() {
