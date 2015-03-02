@@ -10,24 +10,23 @@ define([
     return React.createClass({
 
         onChange: function(event) {
-            console.log('> Changd');
-            this.props.variation.setProperty(event.target.value);
+            this.props.set.setProperty(parseInt(event.target.value, 10));
         },
 
         render: function() {
             var options = [];
+            var otherProperty = this.props.otherPropertyId;
             _.each(PropertyMap, function(property) {
+                var disabled = (property.id == otherProperty);
                 options.push(
-                    <option key={property.id} value={property.id}>{property.label}</option>
+                    <option disabled={disabled} key={property.id} value={property.id}>{property.label}</option>
                 );
             });
             var isDisabled = this.props.isEnabled ? 0 : 1;
             return (
-                <select disabled={isDisabled} onChange={this.onChange}>
-                    <option selected="true" value="0">Choose a property</option>
-                    <optgroup label="Choose a property">
+                <select defaultValue="0" disabled={isDisabled} onChange={this.onChange}>
+                    <option value="0">Choose a property</option>
                         {options}
-                    </optgroup>
                 </select>
             );
         }

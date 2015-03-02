@@ -1,8 +1,9 @@
 define([
     'VariationSelect',
     'EnabledVariation',
-    'React'
-], function(VariationSelect, EnabledVariation, React) {
+    'React',
+    'PropertyMap'
+], function(VariationSelect, EnabledVariation, React, PropertyMap) {
 
     return React.createClass({
 
@@ -15,27 +16,39 @@ define([
         },
 
         render: function() {
+            var set = this.props.set;
 
-            var isFirstVariationSet = this.props.set.primaryProperty.property_id;
-            var isSecondVariationSet = this.props.set.secondaryProperty.property_id;
-            var areBothVariationsSet = (isFirstVariationSet && isSecondVariationSet);
-            var areNeitherVariationsSet = (!isFirstVariationSet && !isSecondVariationSet);
+            var areBothVariationsSet = (set.properties.length == 2);
+            var areNeitherVariationsSet = !(set.properties.length);
 
             var variationA, variationB;
             if (areNeitherVariationsSet) {
-                variationA = <VariationSelect isEnabled="1" variation={this.props.set.primaryProperty} />
-                variationB = <VariationSelect variation={this.props.set.secondaryProperty} />
-            } else if (areBothVariationsSet) {
-                variationA = <EnabledVariation variation={this.props.primaryProperty} />
-                variationB = <EnabledVariation variation={this.props.secondaryProperty} />
+                variationA = <VariationSelect set={set} isEnabled="1" />
+                variationB = <VariationSelect set={set} />
             } else {
-                var a = isFirstVariationSet ? this.props.set.primaryProperty : this.props.set.secondaryProperty;
-                var b = isFirstVariationSet ? this.props.set.secondaryProperty : this.props.set.primaryProperty;
+                var property = PropertyMap[set.properties[0]];
+                var variation = set.byProperty[property.id];
+                variationA = <EnabledVariation
+                                set={set}
+                                options={variation.options}
+                                property_id={property.id}
+                                label={property.label}
+                            />
 
-                variationA = <EnabledVariation variation={a} />
-                variationB = <VariationSelect isEnabled="1" variation={b} />
+                if (areBothVariationsSet) {
+                    property = PropertyMap[set.properties[1]];
+                    variation = set.byProperty[property.id];
+
+                    variationB = <EnabledVariation
+                                    set={set}
+                                    options={variation.options}
+                                    property_id={property.id}
+                                    label={property.label}
+                                />
+                } else {
+                    variationB = <VariationSelect  set={set} otherPropertyId={property.id} isEnabled="1" />
+                }
             }
-
 
             return (
                 <div className="variations-collection">

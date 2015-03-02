@@ -18,23 +18,50 @@ define([
 
     VariationData.prototype.setProperty = function(propertyId) {
         this.property_id = propertyId;
-        this.set.trigger('change');
-    };
-
-    VariationData.prototype.reset = function() {
-        this.options = [];
-        this.property_id = 0;
-        this.set.trigger('change');
     };
 
     VariationData.prototype.getProperty = function() {
         return PropertyMap[this.property_id];
     };
 
-
     var VariationSet = function() {
-        this.primaryProperty = new VariationData(this);
-        this.secondaryProperty = new VariationData(this);
+        this.byProperty = {};
+        this.properties = [];
+    };
+
+    VariationSet.prototype.cancelProperty = function(propertyId) {
+        if (!_.contains(this.properties, propertyId)) {
+            console.log(this.properties, 'dones not contain', propertyId);
+            return false;
+        }
+        this.properties = _.without(this.properties, propertyId);
+        delete this.byProperty[propertyId];
+        this.trigger('change');
+        return true;
+    };
+
+    VariationSet.prototype.setProperty = function(propertyId) {
+        if (this.properties.length == 2) {
+            return false;
+        }
+        this.properties.push(propertyId);
+        var iation;
+        this.byProperty[propertyId] = iation = new VariationData();
+        this.trigger('change');
+        iation.setProperty(propertyId);
+    };
+
+    VariationSet.prototype.addOption = function(property_id, value) {
+        this.byProperty[property_id].options.push({
+            value: value,
+            price: 0,
+            inStock: true
+        });
+    };
+
+    VariationSet.prototype.getOptions = function(property_id) {
+        var variation = this.byProperty[property_id];
+        return variation.options;
     };
 
 
