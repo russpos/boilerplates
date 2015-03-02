@@ -14,11 +14,13 @@
                 'underscore' : '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore',
                 'jquery' : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery',
                 'Backbone' : '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone',
+                'immutable' : '//cdnjs.cloudflare.com/ajax/libs/immutable/3.6.2/immutable',
                 'React' : '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react'
             },
             baseUrl: '/js',
             urlArgs: ('t=' + (new Date()).valueOf()),
             shim: {
+                'immutable' : { exports: 'immutable' },
                 'underscore' : { exports: '_'},
                 'jquery' : { exports: '$' },
                 'Backbone' : { exports: 'Backbone' },
