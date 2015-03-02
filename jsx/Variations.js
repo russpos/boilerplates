@@ -1,9 +1,16 @@
 define([
     'VariationSelect',
     'EnabledVariation',
+    'VariationController',
     'React',
     'PropertyMap'
-], function(VariationSelect, EnabledVariation, React, PropertyMap) {
+], function(
+    VariationSelect,
+    EnabledVariation,
+    VariationController,
+    React,
+    PropertyMap
+) {
 
     return React.createClass({
 
@@ -12,41 +19,40 @@ define([
         },
 
         componentDidMount: function() {
-            this.props.set.on('change', this.forceUpdate, this);
+            VariationController.on('change', this.onChange, this);
         },
 
         render: function() {
-            var set = this.props.set;
 
-            var areBothVariationsSet = (set.properties.length == 2);
-            var areNeitherVariationsSet = !(set.properties.length);
+            var areBothVariationsSet = VariationController.areBothVariationsSet();
+            var areNeitherVariationsSet = VariationController.areNeitherVariationsSet();
 
             var variationA, variationB;
             if (areNeitherVariationsSet) {
-                variationA = <VariationSelect set={set} isEnabled="1" />
-                variationB = <VariationSelect set={set} />
+                variationA = <VariationSelect isEnabled="1" />
+                variationB = <VariationSelect />
             } else {
-                var property = PropertyMap[set.properties[0]];
-                var variation = set.byProperty[property.id];
+                var property = PropertyMap[VariationController.getPropertyIdAtIndex(0)];
+                var variation = VariationController.getVariationByPropertyId(property.id);
                 variationA = <EnabledVariation
-                                set={set}
-                                options={variation.options}
+                                options={variation.options.toJSON()}
                                 property_id={property.id}
+                                isVariationPriced={variation.get('is_pricing_enabled')}
+                                canVariationBePriced="1"
                                 label={property.label}
                             />
 
                 if (areBothVariationsSet) {
-                    property = PropertyMap[set.properties[1]];
-                    variation = set.byProperty[property.id];
+                    property = PropertyMap[VariationController.getPropertyIdAtIndex(1)];
+                    variation = VariationController.getVariationByPropertyId(property.id);
 
                     variationB = <EnabledVariation
-                                    set={set}
-                                    options={variation.options}
+                                    options={variation.options.toJSON()}
                                     property_id={property.id}
                                     label={property.label}
                                 />
                 } else {
-                    variationB = <VariationSelect  set={set} otherPropertyId={property.id} isEnabled="1" />
+                    variationB = <VariationSelect otherPropertyId={property.id} isEnabled="1" />
                 }
             }
 
@@ -58,6 +64,10 @@ define([
                     {variationB}
                 </div>
             );
+        },
+
+        onChange: function() {
+            this.forceUpdate();
         }
     });
 });

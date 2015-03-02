@@ -1,16 +1,18 @@
 define([
     'underscore',
     'PropertyMap',
-    'React'
+    'React',
+    'VariationController'
 ], function(
     _,
     PropertyMap,
-    React
+    React,
+    VariationController
 ) {
     return React.createClass({
 
         onChange: function(event) {
-            this.props.set.setProperty(parseInt(event.target.value, 10));
+            VariationController.addVariationForPropertyId(parseInt(event.target.value, 10));
         },
 
         render: function() {

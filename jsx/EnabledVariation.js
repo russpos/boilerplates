@@ -1,11 +1,13 @@
 define([
     'OptionRow',
     'ErrorMessage',
-    'React'
+    'React',
+    'VariationController'
 ], function(
     OptionRow,
     ErrorMessage,
-    React
+    React,
+    VariationController
 ) {
 
     var ValidateValue = function(value) {
@@ -17,7 +19,7 @@ define([
 
     return React.createClass({
         onCancelButtonClick: function() {
-            this.props.set.cancelProperty(this.props.property_id);
+            VariationController.cancelVariationWithPropertyId(this.props.property_id);
         },
 
         clearInput: function() {
@@ -58,33 +60,66 @@ define([
             if (!value) {
                 return;
             }
-            this.props.set.addOption(this.props.property_id, value);
+            VariationController.addOptionForPropertyId(this.props.property_id, value);
             this.clearInput();
+            this.refresh();
+        },
+
+        refresh: function() {
             this.setState({
                 error: false,
-                options: this.props.set.getOptions(this.props.property_id)
+                isVariationPriced: VariationController.getVariationByPropertyId(this.props.property_id).get('is_pricing_enabled'),
+                options: VariationController.getOptionsByPropertyId(this.props.property_id)
             });
+        },
+
+        handleOptionRowRemoved: function(property_id, value) {
+            VariationController.removeOptionFromPropertyId(property_id, value);
+            this.refresh();
         },
 
         getInitialState: function() {
             return {
+                isVariationPriced: this.props.isVariationPriced,
                 error: false,
                 options: (this.props.options || [])
             };
         },
 
+        onClickEnablePricing: function() {
+            VariationController.enablePricingForVariation(this.props.property_id);
+            this.refresh();
+        },
+
+        onClickDisablePricing: function() {
+            VariationController.disablePricingForVariation(this.props.property_id);
+            this.refresh();
+        },
+
         render: function() {
             var property_id = this.props.property_id,
                 label = this.props.label,
+                props = this.props,
+                self  = this,
+                isVariationPriced = (this.props.canVariationBePriced && this.state.isVariationPriced);
                 optionRows = _.map(this.state.options, function(option) {
                     return <OptionRow
                                 inStock={option.in_stock}
                                 value={option.value}
                                 price={option.price}
+                                isVariationPriced={isVariationPriced}
+                                optionRowRemovedCallback={self.handleOptionRowRemoved}
                                 property_id={property_id} />
                     ;
                 });
             var errorState;
+
+            var priceHeading = '';
+            if (isVariationPriced) {
+                priceHeading = <a onClick={this.onClickDisablePricing}>Disable Pricing</a>
+            } else if (this.props.canVariationBePriced) {
+                priceHeading = <a onClick={this.onClickEnablePricing}>Enable Pricing</a>
+            } 
             if (this.state.error) {
                 errorState = <ErrorMessage message={this.state.error} />;
             }
@@ -95,7 +130,7 @@ define([
                     <table>
                         <th>
                             <td>Name</td>
-                            <td>Pricing</td>
+                            <td>{priceHeading}</td>
                             <td>Stock</td>
                         </th>
                         {optionRows}

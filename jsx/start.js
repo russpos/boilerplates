@@ -1,9 +1,8 @@
-define(['Variations', 'VariationSet', 'React'], function(Variations, VariationSet, React) {
+define(['Variations', 'React'], function(Variations, React) {
 
-    var varSet = new VariationSet();
     return function(id) {
         React.render(
-            <Variations set={varSet} />,
+            <Variations />,
             document.getElementById(id)
         );
     }
